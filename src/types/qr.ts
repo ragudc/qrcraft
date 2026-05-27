@@ -18,7 +18,7 @@ export interface QRConfig {
   dotStyle: DotStyle
   cornerStyle: CornerStyle
   logoEnabled: boolean
-  logoUrl: string
+  logoUrl: string | null
   logoSize: number
 }
 
@@ -40,6 +40,6 @@ export const DEFAULT_QR_CONFIG: QRConfig = {
   dotStyle: 'square',
   cornerStyle: 'square',
   logoEnabled: false,
-  logoUrl: '',
+  logoUrl: null,
   logoSize: 20,
 }
