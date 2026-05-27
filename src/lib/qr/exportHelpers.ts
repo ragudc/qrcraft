@@ -119,3 +119,16 @@ export async function exportPDF(
 
   pdf.save(fileName)
 }
+
+export async function captureQRAsBase64(containerEl: HTMLElement): Promise<string> {
+  const { default: html2canvas } = await import('html2canvas')
+
+  const canvas = await html2canvas(containerEl, {
+    backgroundColor: null,
+    scale:           2,
+    useCORS:         true,
+    logging:         false,
+  })
+
+  return canvas.toDataURL('image/png')
+}

@@ -25,10 +25,12 @@ export interface QRConfig {
 export interface QRRecord {
   id: string
   user_id: string
-  config: QRConfig
+  url: string
+  config_json: QRConfig
+  preview_url: string | null
+  label: string | null
   created_at: string
   updated_at: string
-  name: string
 }
 
 export const DEFAULT_QR_CONFIG: QRConfig = {

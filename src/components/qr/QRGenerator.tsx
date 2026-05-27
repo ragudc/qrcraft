@@ -1,10 +1,12 @@
 "use client"
 
-import { useRef }            from 'react'
-import { useQRGenerator }    from '@/hooks/useQRGenerator'
-import { QRControls }        from '@/components/qr/QRControls'
+import { useRef, useEffect }  from 'react'
+import { useQRGenerator }     from '@/hooks/useQRGenerator'
+import { QRControls }         from '@/components/qr/QRControls'
 import { QRPreview, type QRPreviewHandle } from '@/components/qr/QRPreview'
-import { QRDownloadButtons } from '@/components/qr/QRDownloadButtons'
+import { QRDownloadButtons }  from '@/components/qr/QRDownloadButtons'
+import { QRSaveButton }       from '@/components/qr/QRSaveButton'
+import { createClient }       from '@/lib/supabase/client'
 import {
   Card,
   CardContent,
@@ -12,10 +14,35 @@ import {
   CardTitle,
   CardDescription,
 } from '@/components/ui/card'
+import type { QRConfig }      from '@/types/qr'
 
-export function QRGenerator() {
+interface QRGeneratorProps {
+  loadId?: string
+}
+
+export function QRGenerator({ loadId }: QRGeneratorProps) {
   const { config, updateConfig, resetConfig, hasValidUrl } = useQRGenerator()
   const previewRef = useRef<QRPreviewHandle>(null)
+
+  useEffect(() => {
+    if (!loadId) return
+
+    const supabase = createClient()
+    supabase
+      .from('qr_codes')
+      .select('config_json')
+      .eq('id', loadId)
+      .single()
+      .then(({ data }) => {
+        if (data?.config_json) {
+          const saved = data.config_json as QRConfig
+          Object.entries(saved).forEach(([k, v]) => {
+            updateConfig({ [k]: v } as Partial<QRConfig>)
+          })
+        }
+      })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loadId])
 
   return (
     <section className="mx-auto w-full max-w-5xl px-4 py-10">
@@ -57,6 +84,11 @@ export function QRGenerator() {
             />
             <QRDownloadButtons
               qrInstance={previewRef.current?.qrInstance ?? { current: null }}
+              containerRef={previewRef.current?.containerRef ?? { current: null }}
+              config={config}
+              hasValidUrl={hasValidUrl}
+            />
+            <QRSaveButton
               containerRef={previewRef.current?.containerRef ?? { current: null }}
               config={config}
               hasValidUrl={hasValidUrl}

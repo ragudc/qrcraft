@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { QrCode } from "lucide-react"
 import { ThemeToggle } from "@/components/shared/ThemeToggle"
+import { UserMenu } from "@/components/shared/UserMenu"
 import { Separator } from "@/components/ui/separator"
 
 export function Header() {
@@ -18,14 +19,10 @@ export function Header() {
           <span className="text-lg">QRCraft</span>
         </Link>
 
+        {/* Right side: UserMenu + theme toggle */}
         <div className="flex items-center gap-1">
-          <Link
-            href="/dashboard"
-            className="hidden sm:flex items-center px-3 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
-          >
-            My QR Codes
-          </Link>
-          <Separator orientation="vertical" className="hidden sm:block h-5 mx-1" />
+          <UserMenu />
+          <Separator orientation="vertical" className="h-5 mx-1" />
           <ThemeToggle />
         </div>
 
