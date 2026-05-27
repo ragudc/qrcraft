@@ -1,8 +1,10 @@
 "use client"
 
-import { useQRGenerator } from '@/hooks/useQRGenerator'
-import { QRControls } from '@/components/qr/QRControls'
-import { QRPreview } from '@/components/qr/QRPreview'
+import { useRef }            from 'react'
+import { useQRGenerator }    from '@/hooks/useQRGenerator'
+import { QRControls }        from '@/components/qr/QRControls'
+import { QRPreview, type QRPreviewHandle } from '@/components/qr/QRPreview'
+import { QRDownloadButtons } from '@/components/qr/QRDownloadButtons'
 import {
   Card,
   CardContent,
@@ -12,8 +14,8 @@ import {
 } from '@/components/ui/card'
 
 export function QRGenerator() {
-  const { config, updateConfig, resetConfig, hasValidUrl } =
-    useQRGenerator()
+  const { config, updateConfig, resetConfig, hasValidUrl } = useQRGenerator()
+  const previewRef = useRef<QRPreviewHandle>(null)
 
   return (
     <section className="mx-auto w-full max-w-5xl px-4 py-10">
@@ -31,9 +33,7 @@ export function QRGenerator() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Configuration</CardTitle>
-            <CardDescription>
-              Customize your QR code settings
-            </CardDescription>
+            <CardDescription>Customize your QR code settings</CardDescription>
           </CardHeader>
           <CardContent>
             <QRControls
@@ -47,12 +47,17 @@ export function QRGenerator() {
         <Card>
           <CardHeader>
             <CardTitle className="text-lg">Preview</CardTitle>
-            <CardDescription>
-              Live preview updates as you type
-            </CardDescription>
+            <CardDescription>Live preview — updates as you type</CardDescription>
           </CardHeader>
-          <CardContent className="flex justify-center">
+          <CardContent className="flex flex-col items-center gap-4">
             <QRPreview
+              ref={previewRef}
+              config={config}
+              hasValidUrl={hasValidUrl}
+            />
+            <QRDownloadButtons
+              qrInstance={previewRef.current?.qrInstance ?? { current: null }}
+              containerRef={previewRef.current?.containerRef ?? { current: null }}
               config={config}
               hasValidUrl={hasValidUrl}
             />
